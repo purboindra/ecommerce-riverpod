@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:developer';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:riverpod_app/src/repositories/product/provider/product_repository_provider.dart';
@@ -24,10 +27,6 @@ final pageProvider = StateProvider<int>((ref) {
   return 1;
 });
 
-final queryProvider = StateProvider<String>((ref) {
-  return "";
-});
-
 @riverpod
 Future<Map<String, dynamic>> fetchAllProducts(FetchAllProductsRef ref,
     {int? limit, int? skip, String? query}) async {
@@ -46,4 +45,31 @@ Future<Map<String, dynamic>> fetchAllProducts(FetchAllProductsRef ref,
       );
 
   return result;
+}
+
+@riverpod
+class SearchProductNotifier extends _$SearchProductNotifier {
+  Timer? _debounce;
+
+  @override
+  String build() {
+    ref.onDispose(() {
+      _debounce?.cancel();
+    });
+    return "";
+  }
+
+  void setQuery(String query) {
+    if (_debounce != null) {
+      _debounce!.cancel();
+    }
+
+    _debounce = Timer(
+      const Duration(milliseconds: 500),
+      () {
+        state = query;
+        log("STATE: $query");
+      },
+    );
+  }
 }

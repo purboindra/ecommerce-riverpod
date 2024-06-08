@@ -191,5 +191,23 @@ class _FetchAllProductsProviderElement
   @override
   String? get query => (origin as FetchAllProductsProvider).query;
 }
+
+String _$searchProductNotifierHash() =>
+    r'cc78405ab359115c1fe39899bd1843728012f712';
+
+/// See also [SearchProductNotifier].
+@ProviderFor(SearchProductNotifier)
+final searchProductNotifierProvider =
+    AutoDisposeNotifierProvider<SearchProductNotifier, String>.internal(
+  SearchProductNotifier.new,
+  name: r'searchProductNotifierProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$searchProductNotifierHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$SearchProductNotifier = AutoDisposeNotifier<String>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
