@@ -1,31 +1,19 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_app/src/data/product_model.dart';
 import 'package:riverpod_app/src/presentations/product/provider/product_provider.dart';
 
-class ProductScreen extends ConsumerStatefulWidget {
+class ProductScreen extends ConsumerWidget {
   const ProductScreen({super.key});
-
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _ProductScreenState();
-}
-
-class _ProductScreenState extends ConsumerState<ProductScreen> {
-  final _query = TextEditingController();
-
-  @override
-  void dispose() {
-    super.dispose();
-    _query.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final totalPage = ref.watch(totalPageProvider);
     final limit = ref.watch(limitProvider);
     final skip = ref.watch(skipProvider);
     final page = ref.watch(pageProvider);
-    final query = ref.watch(queryProvider);
+    final query = ref.watch(searchProductNotifierProvider);
 
     final totalItems = ref.watch(totalItemsProvider);
 
@@ -44,7 +32,12 @@ class _ProductScreenState extends ConsumerState<ProductScreen> {
               children: [
                 Expanded(
                   child: TextField(
-                    controller: _query,
+                    onChanged: (value) {
+                      log("ON CHANGE: $value");
+                      ref
+                          .read(searchProductNotifierProvider.notifier)
+                          .setQuery(value);
+                    },
                     decoration: InputDecoration(
                         border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -54,16 +47,9 @@ class _ProductScreenState extends ConsumerState<ProductScreen> {
                 const SizedBox(
                   width: 10,
                 ),
-                IconButton(
-                  onPressed: () {
-                    ref.read(queryProvider.notifier).update(
-                          (state) => _query.text,
-                        );
-                  },
-                  icon: const Icon(
-                    Icons.search,
-                    size: 28,
-                  ),
+                const Icon(
+                  Icons.search,
+                  size: 28,
                 ),
               ],
             ),
